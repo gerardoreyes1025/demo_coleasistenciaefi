@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Asistencia Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Scripts para Reportes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="header-content">
+                    <h1>Asistencia Docente</h1>
+                    <p id="header-date"></p>
+                </div>
+                <!-- Sistema de Backup Central -->
+                <div class="header-backup">
+                    <span class="backup-label">Copia de Seguridad</span>
+                    <div class="backup-btns">
+                        <button id="backup-save-btn" class="btn-backup"
+                            title="Guardar todos los datos en un archivo">Guardar</button>
+                        <button id="backup-load-btn" class="btn-backup"
+                            title="Cargar datos de un archivo">Cargar</button>
+                        <input type="file" id="backup-file-input" style="display: none;" accept=".json">
+                    </div>
+                </div>
+                <nav class="tabs">
+                    <button class="tab-btn active" data-tab="attendance-tab">Asistencia</button>
+                    <button class="tab-btn" data-tab="students-tab">Alumnos</button>
+                    <button class="tab-btn" data-tab="reports-tab">Reportes</button>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <!-- SECCIÓN ASISTENCIA -->
+            <section id="attendance-tab" class="tab-content active">
+                <div class="controls">
+                    <div class="date-selector">
+                        <label for="attendance-date">Fecha:</label>
+                        <input type="date" id="attendance-date">
+                    </div>
+                    <div class="summary-pills">
+                        <span class="pill pill-a">A: <span id="count-a">0</span></span>
+                        <span class="pill pill-t">T: <span id="count-t">0</span></span>
+                        <span class="pill pill-f">F: <span id="count-f">0</span></span>
+                        <span class="pill pill-j">J: <span id="count-j">0</span></span>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="main-table">
+                        <thead>
+                            <tr>
+                                <th>Alumno</th>
+                                <th>Marcado</th>
+                                <th>Hora</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendance-list">
+                            <!-- Inyectado por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECCIÓN ALUMNOS -->
+            <section id="students-tab" class="tab-content">
+                <div class="module-header">
+                    <h2>Gestión de Alumnos</h2>
+                    <div class="add-student-form">
+                        <input type="text" id="new-student-name" placeholder="Nombre completo...">
+                        <button id="add-student-btn" class="btn-primary">Registrar</button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="main-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="manage-students-list">
+                            <!-- Inyectado por JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SECCIÓN REPORTES -->
+            <section id="reports-tab" class="tab-content">
+                <div class="module-header">
+                    <h2>Reportes Mensuales</h2>
+                    <p>Seleccione el mes y año para generar el resumen de asistencia.</p>
+                </div>
+
+                <div class="report-controls">
+                    <div class="input-group">
+                        <label>Mes:</label>
+                        <select id="report-month">
+                            <option value="0">Enero</option>
+                            <option value="1">Febrero</option>
+                            <option value="2">Marzo</option>
+                            <option value="3">Abril</option>
+                            <option value="4">Mayo</option>
+                            <option value="5">Junio</option>
+                            <option value="6">Julio</option>
+                            <option value="7">Agosto</option>
+                            <option value="8">Septiembre</option>
+                            <option value="9">Octubre</option>
+                            <option value="10">Noviembre</option>
+                            <option value="11">Diciembre</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Año:</label>
+                        <input type="number" id="report-year" value="2026">
+                    </div>
+                    <div class="report-actions">
+                        <button id="export-excel-btn" class="btn-excel">Exportar Excel</button>
+                        <button id="export-pdf-btn" class="btn-pdf">Exportar PDF</button>
+                    </div>
+                </div>
+
+                <div id="report-preview" class="report-preview">
+                    <!-- Preview summary could go here -->
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Sistema de Asistencia | LocalStorage Persistence</p>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
